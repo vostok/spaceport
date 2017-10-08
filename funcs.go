@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"time"
 
-	airlock "github.com/vostok/airlock.client.go"
+	airlock "github.com/vostok/airlock-client-go"
 )
 
 // SendBody sends message to airlock

@@ -1,9 +1,10 @@
 default: prepare up
 
 prepare:
-	go get gopkg.in/restruct.v1
-	go get github.com/onsi/ginkgo/ginkgo  # installs the ginkgo CLI
-	go get github.com/onsi/gomega
+	go get -u github.com/vostok/airlock-client-go
+	go get -u gopkg.in/restruct.v1
+	go get -u github.com/onsi/ginkgo/ginkgo  # installs the ginkgo CLI
+	go get -u github.com/onsi/gomega
 
 update:
 	docker-compose pull
@@ -17,7 +18,7 @@ clean:
 
 check:
 	@echo "Running tests"
-	go test -cover 
+	go test -cover
 
 test: clean prepare up check
 	docker-compose down
