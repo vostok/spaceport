@@ -36,7 +36,7 @@ Launch Vostok
 make up
 ```
 
-Clean spaceport
+Clean launch site
 ```
 make clean
 ```

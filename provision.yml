@@ -1,0 +1,76 @@
+---
+
+- hosts: cassandra
+  connection: docker
+  tasks:
+    #- name: Disable HintedHandoff
+    #  lineinfile: "dest=/etc/cassandra/cassandra.yaml state=present regexp='^hinted_handoff_enabled: true' line='hinted_handoff_enabled: false'"
+    #- name: Disable Hint window
+    #  lineinfile: "dest=/etc/cassandra/cassandra.yaml state=present regexp='^max_hint_window_in_ms: 10800000' line='max_hint_window_in_ms: 1'"
+    #- name: Disable HintedHandoff throttle
+    #  lineinfile: "dest=/etc/cassandra/cassandra.yaml state=present regexp='^hinted_handoff_throttle_in_kb: 1024' line='hinted_handoff_throttle_in_kb: 1'"
+    #- name: Cut Hints delivery threads
+    #  lineinfile: "dest=/etc/cassandra/cassandra.yaml state=present regexp='^max_hints_delivery_threads: 2' line='max_hints_delivery_threads: 1'"
+    - name: Disable JMX authentication in Cassandra
+      lineinfile: "dest=/etc/cassandra/cassandra-env.sh state=present regexp='jmxremote.authenticate=true' line='  JVM_OPTS=\"$JVM_OPTS -Dcom.sun.management.jmxremote.authenticate=false\"'"
+
+- hosts: grafana
+  connection: local
+  tasks:
+    - name: Create datasource in grafana
+      uri:
+        url: http://172.15.200.30:3000/api/datasources
+        HEADER_Content-Type: "application/json"
+        method: POST
+        user: admin
+        password: admin
+        body: "{{ lookup('file','docker/grafana/datasource.json') }}"
+        force_basic_auth: yes
+        status_code: 200
+        body_format: json
+      retries: 5
+      delay: 10
+    - name: Create dashboards in grafana
+      uri:
+        url: http://172.15.200.30:3000/api/dashboards/db
+        HEADER_Content-Type: "application/json"
+        method: POST
+        user: admin
+        password: admin
+        body: "{{ lookup('file',item) }}"
+        force_basic_auth: yes
+        status_code: 200
+        body_format: json
+      retries: 5
+      delay: 10
+      with_fileglob:
+        - ./docker/grafana/dashboards/*.json
+
+
+- hosts: elk
+  connection: local
+  tasks:
+    - name: Create indexes in elasticsearch
+      uri:
+        url: http://localhost:9200/.kibana/index-pattern/{{ item.name }}?op_type=create
+        HEADER_Content-Type: "application/json"
+        method: POST
+        body: "{{ item.pattern }}"
+        status_code: 201
+        body_format: json
+      retries: 10
+      delay: 20
+      with_items:
+        - name: logstash-*
+          pattern: '{"title":"logstash-*","timeFieldName":"@timestamp"}'
+
+    - name: make logstash index as default
+      uri:
+        url: http://172.15.100.20:9200/.kibana/config/4.5.4/_update
+        HEADER_Content-Type: "application/json"
+        method: POST
+        body: '{"doc":{"defaultIndex":"logstash-*"}}'
+        status_code: 200
+        body_format: json
+      retries: 10
+      delay: 20

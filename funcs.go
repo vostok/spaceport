@@ -4,8 +4,11 @@ import (
 	"bytes"
 	"net/http"
 	"time"
+
+	airlock "github.com/vostok/airlock.client.go"
 )
 
+// SendBody sends message to airlock
 func SendBody(payloadURL, apiKeyField, apiKey, rountingKey string) *http.Response {
 	body := createCorrectBody(rountingKey, 10).GetBytes()
 	client := &http.Client{}
@@ -15,26 +18,26 @@ func SendBody(payloadURL, apiKeyField, apiKey, rountingKey string) *http.Respons
 	return resp
 }
 
-func createCorrectBody(routingKey string, recordSize int32) AirlockMessage {
-	arr := ByteArray{}
+func createCorrectBody(routingKey string, recordSize int32) airlock.Message {
+	arr := airlock.ByteArray{}
 	arr.Size = recordSize
 	arr.Bytes = make([]byte, recordSize)
 
-	record := EventRecord{}
+	record := airlock.EventRecord{}
 	record.Timestamp = time.Now().Unix()
 	record.Data = arr
 
-	eventGroup := EventGroup{}
+	eventGroup := airlock.EventGroup{}
 	eventGroup.KeySize = int32(len(routingKey))
 	eventGroup.RoutingKey = routingKey
 	eventGroup.RecordsSize = 1
-	eventGroup.Records = []EventRecord{record}
+	eventGroup.Records = []airlock.EventRecord{record}
 
-	groups := EventGroupList{}
+	groups := airlock.EventGroupList{}
 	groups.Size = 1
-	groups.List = []EventGroup{eventGroup}
+	groups.List = []airlock.EventGroup{eventGroup}
 
-	message := AirlockMessage{}
+	message := airlock.Message{}
 	message.Version = 1
 	message.EventGroups = groups
 	return message

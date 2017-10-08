@@ -8,6 +8,11 @@ import (
 	"testing"
 )
 
+type keyTest struct {
+	APIKey     string
+	RoutingKey string
+}
+
 func TestIntegration(t *testing.T) {
 	RegisterFailHandler(Fail)
 	junitReporter := reporters.NewJUnitReporter("junit.xml")

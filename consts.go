@@ -1,7 +1,10 @@
 package integration
 
 const (
-	PayloadURL  = "http://localhost:8888/send"
+	// PayloadURL of Airlock.Gate service
+	PayloadURL = "http://localhost:8888/send"
+	// APIKeyField name of HTTP header
 	APIKeyField = "x-apikey"
-	Timeout     = float64(600)
+	// Timeout for requests
+	Timeout = float64(600)
 )
