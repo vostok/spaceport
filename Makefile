@@ -1,3 +1,5 @@
+.PHONY: default prepare update up clean check test
+
 default: prepare up
 
 prepare:
