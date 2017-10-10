@@ -1,6 +1,6 @@
 airlock.consumer.log.file.pattern: "./log/actions-{Date}.txt"
 airlock.consumer.elastic.endpoints:
- - 'http://elastic:9200/'
+ - 'http://elasticsearch:9200/'
 
 # kafka consumer settings
 bootstrap.servers: "kafka:9092"
