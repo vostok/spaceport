@@ -5,6 +5,7 @@ services:
   # Cassandra
   cassandra:
     image: cassandra
+    container_name: cassandra
     ports:
       - 9042:9042
 
