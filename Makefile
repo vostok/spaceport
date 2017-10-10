@@ -1,12 +1,12 @@
 .PHONY: default prepare update up clean check test
 
-default: prepare up
+default: up
 
 prepare:
-	go get -u github.com/vostok/airlock-client-go
-	go get -u gopkg.in/restruct.v1
-	go get -u github.com/onsi/ginkgo/ginkgo  # installs the ginkgo CLI
-	go get -u github.com/onsi/gomega
+	@go get -u github.com/vostok/airlock-client-go
+	@go get gopkg.in/restruct.v1
+	@go get github.com/onsi/ginkgo/ginkgo  # installs the ginkgo CLI
+	@go get github.com/onsi/gomega
 
 update:
 	docker-compose pull
