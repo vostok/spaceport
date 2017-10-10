@@ -78,9 +78,8 @@ services:
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
       KAFKA_ZOOKEEPER_CONNECT: zk:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://127.0.0.1:9092
+      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://kafka:9092"
       KAFKA_HEAP_OPTS: "-Xmx512m -Xms512m"
-
   #---------------------------------------------- Services
   # Airlock Gate - HTTP -> Kafka proxy
   gate:
