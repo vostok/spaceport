@@ -171,7 +171,5 @@ services:
     image: skbkontur/contrails.web:latest
     depends_on:
       - contrails_api
-    volumes:
-      - /home/kir_melnikov/Dropbox/Kontur/vostok-project/contrails.web/nginx.conf:/etc/nginx/conf.d/default.conf
     ports:
       - 80:80
