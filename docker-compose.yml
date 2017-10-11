@@ -96,13 +96,11 @@ services:
     image: skbkontur/airlock.consumer:latest
     depends_on:
       - kafka
+      - graphite
       - elasticsearch
     entrypoint:
       - dotnet
       - /app/Vostok.AirlockConsumer.Logs/out/Vostok.AirlockConsumer.Logs.dll
-      - /etc/vostok/airlock-consumer/config.yml
-    volumes:
-      - ./etc/airlock-consumer:/etc/vostok/airlock-consumer
 
   # Metrics consumer
   metrics:
@@ -113,9 +111,6 @@ services:
     entrypoint:
       - dotnet
       - /app/Vostok.AirlockConsumer.Metrics/out/Vostok.AirlockConsumer.Metrics.dll
-      - /etc/vostok/airlock-consumer/config.yml
-    volumes:
-      - ./etc/airlock-consumer:/etc/vostok/airlock-consumer
 
   # Metrics aggregation consumer
   metrics_aggr:
@@ -127,37 +122,30 @@ services:
     entrypoint:
       - dotnet
       - /app/Vostok.AirlockConsumer.MetricsAggregator/out/Vostok.AirlockConsumer.MetricsAggregator.dll
-      - /etc/vostok/airlock-consumer/config.yml
-    volumes:
-      - ./etc/airlock-consumer:/etc/vostok/airlock-consumer
 
   # Tracing consumer
   tracing:
     image: skbkontur/airlock.consumer:latest
     depends_on:
       - kafka
+      - graphite
       - cassandra
     entrypoint:
       - dotnet
       - /app/Vostok.AirlockConsumer.Tracing/out/Vostok.AirlockConsumer.Tracing.dll
-      - /etc/vostok/airlock-consumer/config.yml
-    volumes:
-      - ./etc/airlock-consumer:/etc/vostok/airlock-consumer
 
   # Tracing metrics consumer
   tte:
     image: skbkontur/airlock.consumer:latest
     depends_on:
       - kafka
+      - graphite
       - gate
       - tracing
       - cassandra
     entrypoint:
       - dotnet
       - /app/Vostok.AirlockConsumer.TracesToEvents/out/Vostok.AirlockConsumer.TracesToEvents.dll
-      - /etc/vostok/airlock-consumer/config.yml
-    volumes:
-      - ./etc/airlock-consumer:/etc/vostok/airlock-consumer
 
   contrails_api:
     image: skbkontur/contrails.api:latest
