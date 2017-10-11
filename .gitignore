@@ -1,3 +1,5 @@
 .cache/
 __pycache__
 junit.xml
+output/
+bin/

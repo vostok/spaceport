@@ -11,7 +11,7 @@ prepare:
 update:
 	docker-compose pull
 
-up: update
+up:
 	docker-compose up -d
 	sleep 5
 
@@ -23,4 +23,5 @@ check:
 	go test -cover
 
 test: clean prepare up check
+
 	docker-compose down
