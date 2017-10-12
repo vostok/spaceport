@@ -130,9 +130,7 @@ services:
       - kafka
       - graphite
       - cassandra
-    entrypoint:
-      - dotnet
-      - /app/Vostok.AirlockConsumer.Tracing/out/Vostok.AirlockConsumer.Tracing.dll
+    entrypoint: ["/bin/wait-for-it.sh", "cassandra:9042", "--timeout=30", "--strict", "--", "dotnet", "/app/Vostok.AirlockConsumer.Tracing/out/Vostok.AirlockConsumer.Tracing.dll"]
 
   # Tracing metrics consumer
   tte:
