@@ -98,9 +98,7 @@ services:
       - kafka
       - graphite
       - elasticsearch
-    entrypoint:
-      - dotnet
-      - /app/Vostok.AirlockConsumer.Logs/out/Vostok.AirlockConsumer.Logs.dll
+    entrypoint: ["/bin/wait-for-it.sh", "elasticsearch:9200", "--timeout=30", "--strict", "--", "dotnet", "/app/Vostok.AirlockConsumer.Logs/out/Vostok.AirlockConsumer.Logs.dll"]
 
   # Metrics consumer
   metrics:
@@ -108,9 +106,7 @@ services:
     depends_on:
       - kafka
       - graphite
-    entrypoint:
-      - dotnet
-      - /app/Vostok.AirlockConsumer.Metrics/out/Vostok.AirlockConsumer.Metrics.dll
+    entrypoint: ["/bin/wait-for-it.sh", "graphite:2003", "--timeout=30", "--strict", "--", "dotnet", "/app/Vostok.AirlockConsumer.Metrics/out/Vostok.AirlockConsumer.Metrics.dll"]
 
   # Metrics aggregation consumer
   metrics_aggr:
@@ -119,9 +115,7 @@ services:
       - kafka
       - gate
       - graphite
-    entrypoint:
-      - dotnet
-      - /app/Vostok.AirlockConsumer.MetricsAggregator/out/Vostok.AirlockConsumer.MetricsAggregator.dll
+    entrypoint: ["/bin/wait-for-it.sh", "gate:8888", "--timeout=30", "--strict", "--", "dotnet", "/app/Vostok.AirlockConsumer.MetricsAggregator/out/Vostok.AirlockConsumer.MetricsAggregator.dll"]
 
   # Tracing consumer
   tracing:
@@ -132,18 +126,14 @@ services:
       - cassandra
     entrypoint: ["/bin/wait-for-it.sh", "cassandra:9042", "--timeout=30", "--strict", "--", "dotnet", "/app/Vostok.AirlockConsumer.Tracing/out/Vostok.AirlockConsumer.Tracing.dll"]
 
-  # Tracing metrics consumer
+  # TracesToEvents consumer
   tte:
     image: skbkontur/airlock.consumer:latest
     depends_on:
       - kafka
       - graphite
       - gate
-      - tracing
-      - cassandra
-    entrypoint:
-      - dotnet
-      - /app/Vostok.AirlockConsumer.TracesToEvents/out/Vostok.AirlockConsumer.TracesToEvents.dll
+    entrypoint: ["/bin/wait-for-it.sh", "gate:8888", "--timeout=30", "--strict", "--", "dotnet", "/app/Vostok.AirlockConsumer.TracesToEvents/out/Vostok.AirlockConsumer.TracesToEvents.dll"]
 
   contrails_api:
     image: skbkontur/contrails.api:latest
