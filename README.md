@@ -1,6 +1,7 @@
 # Spaceport
 
 All-in-one Vostok development infrastructure with integration tests inside.
+All component images you may find at [Docker Hub](https://hub.docker.com/u/vstk/).
 
 Spaceport is useful in two cases:
 
@@ -19,7 +20,8 @@ $ docker-compose --version
 docker-compose version 1.16.1, build 6d1ac21
 ```
 
-**Beware:** you won't be able to run all services on a very old or weak machine. Mid-2014 MacBook Pro with 8GB RAM shows acceptable performance in our experience.
+**Beware:** you won't be able to run all services on a very old or weak machine.
+Mid-2014 MacBook Pro with 8GB RAM shows acceptable performance in our experience.
 
 If you have `make`:
 
@@ -34,13 +36,14 @@ If you don't have `make`, life will be a tiny bit harder for you. Just look insi
 
 Spaceport provides:
 
-- [Graphite](https://graphiteapp.org) at `localhost:8080` and [Grafana](https://grafana.com) at `localhost:3000`
-- [Kibana](https://www.elastic.co/products/kibana) at `localhost:5601`
-- [Contrails](https://github.com/vostok/contrails.web) at `localhost:80`
+- [Graphite](https://graphiteapp.org) at `localhost:6304` and [Grafana](https://grafana.com) at `localhost:6303`
+- [Kibana](https://www.elastic.co/products/kibana) at `localhost:6305`
+- [Contrails](https://github.com/vostok/contrails.web) at `localhost:6300`
 
 ## Test Vostok-instrumented Applications
 
-Use [launchpad](https://github.com/vostok/launchpad) to create a boilerplate C# project. It will be preconfigured to work with Spaceport on your local machine. Make some HTTP requests to your application and see results in Grafana, Kibana and Contrails.
+Use [launchpad](https://github.com/vostok/launchpad) to create a boilerplate C# project. It will be preconfigured to work with Spaceport on your local machine.
+Make some HTTP requests to your application and see results in Grafana, Kibana and Contrails.
 
 ## Fix Bugs and Develop New Components in Vostok
 

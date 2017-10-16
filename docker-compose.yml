@@ -18,7 +18,7 @@ services:
     image: nickstenning/graphite
     container_name: graphite
     ports:
-      - 8080:80
+      - 6304:80
       - 2003:2003
 
   # Grafana - metric visualization
@@ -26,7 +26,7 @@ services:
     image: grafana/grafana:4.5.2
     container_name: grafana
     ports:
-      - 3000:3000
+      - 6303:3000
     environment:
       GF_AUTH_ANONYMOUS_ENABLED: "true"
       GF_USERS_ALLOW_SIGN_UP: "false"
@@ -50,7 +50,7 @@ services:
     depends_on:
       - elasticsearch
     ports:
-      - 5601:5601
+      - 6305:5601
     environment:
       NODE_OPTIONS: "--max-old-space-size=300"
 
@@ -83,9 +83,9 @@ services:
   #---------------------------------------------- Services
   # Airlock Gate - HTTP -> Kafka proxy
   gate:
-    image: skbkontur/airlock.gate:latest
+    image: vstk/airlock.gate:latest
     ports:
-      - 8888:8888
+      - 6302:8888
     depends_on:
       - kafka
     volumes:
@@ -94,7 +94,7 @@ services:
 
   # Log consumer
   logs:
-    image: skbkontur/airlock.consumer:latest
+    image: vstk/airlock.consumer:latest
     depends_on:
       - kafka
       - graphite
@@ -103,7 +103,7 @@ services:
 
   # Metrics consumer
   metrics:
-    image: skbkontur/airlock.consumer:latest
+    image: vstk/airlock.consumer:latest
     depends_on:
       - kafka
       - graphite
@@ -111,7 +111,7 @@ services:
 
   # Metrics aggregation consumer
   metrics_aggr:
-    image: skbkontur/airlock.consumer:latest
+    image: vstk/airlock.consumer:latest
     depends_on:
       - kafka
       - gate
@@ -120,7 +120,7 @@ services:
 
   # Tracing consumer
   tracing:
-    image: skbkontur/airlock.consumer:latest
+    image: vstk/airlock.consumer:latest
     depends_on:
       - kafka
       - graphite
@@ -129,7 +129,7 @@ services:
 
   # TracesToEvents consumer
   tte:
-    image: skbkontur/airlock.consumer:latest
+    image: vstk/airlock.consumer:latest
     depends_on:
       - kafka
       - graphite
@@ -137,16 +137,16 @@ services:
     entrypoint: ["/bin/wait-for-it.sh", "gate:8888", "--timeout=30", "--strict", "--", "dotnet", "/app/Vostok.AirlockConsumer.TracesToEvents/out/Vostok.AirlockConsumer.TracesToEvents.dll"]
 
   contrails_api:
-    image: skbkontur/contrails.api:latest
+    image: vstk/contrails.api:latest
     container_name: contrails_api
     depends_on:
       - cassandra
     ports:
-      - 8084:10623
+      - 6301:10623
 
   contrails_web:
-    image: skbkontur/contrails.web:latest
+    image: vstk/contrails.web:latest
     depends_on:
       - contrails_api
     ports:
-      - 80:80
+      - 6300:80
