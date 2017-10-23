@@ -1,0 +1,23 @@
+body {
+    font-family: "Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
+}
+
+tr.serviceLink td:first-child {
+    font-weight: normal;
+}
+
+#services div {
+    width: 10px;
+    height: 10px;
+    display: block;
+    float:left;
+    margin: 5px 10px 5px 5px;
+}
+
+.ok {
+    background: green;
+}
+
+.error {
+    background: red;
+}

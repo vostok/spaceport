@@ -85,11 +85,18 @@ services:
       KAFKA_HEAP_OPTS: "-Xmx512m -Xms512m"
 
   #---------------------------------------------- Services
+  portal:
+    image: nginx:alpine
+    volumes:
+      - ./etc/landing:/usr/share/nginx/html
+    ports:
+      - 6300:80
+
   # Airlock Gate - HTTP -> Kafka proxy
   gate:
     image: vstk/airlock.gate:latest
     ports:
-      - 6300:8888
+      - 6306:8888
     depends_on:
       - kafka
     volumes:
@@ -146,11 +153,11 @@ services:
     depends_on:
       - cassandra
     ports:
-      - 6301:10623
+      - 6302:10623
 
   contrails_web:
     image: vstk/contrails.web:latest
     depends_on:
       - contrails_api
     ports:
-      - 6302:80
+      - 6301:80
