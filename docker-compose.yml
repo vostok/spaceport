@@ -63,12 +63,13 @@ services:
     ports:
       - 2181:2181
     environment:
-      - ZOO_MY_ID=1
+      ZOO_MY_ID: 1
 
   # Kafka - stream processing engine
   kafka:
     image: confluentinc/cp-kafka
     container_name: kafka
+    hostname: kafka
     depends_on:
       - zookeeper
     ports:
@@ -78,8 +79,10 @@ services:
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
       KAFKA_ZOOKEEPER_CONNECT: zk:2181
+      KAFKA_ADVERTISED_HOST_NAME: kafka
       KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://kafka:9092"
       KAFKA_HEAP_OPTS: "-Xmx512m -Xms512m"
+
   #---------------------------------------------- Services
   # Airlock Gate - HTTP -> Kafka proxy
   gate:
