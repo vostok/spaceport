@@ -38,7 +38,7 @@ Spaceport provides:
 
 - [Graphite](https://graphiteapp.org) at `localhost:6304` and [Grafana](https://grafana.com) at `localhost:6303`
 - [Kibana](https://www.elastic.co/products/kibana) at `localhost:6305`
-- [Contrails](https://github.com/vostok/contrails.web) at `localhost:6300`
+- [Contrails](https://github.com/vostok/contrails.web) at `localhost:6302`
 
 ## Test Vostok-instrumented Applications
 

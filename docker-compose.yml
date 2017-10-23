@@ -89,7 +89,7 @@ services:
   gate:
     image: vstk/airlock.gate:latest
     ports:
-      - 6302:8888
+      - 6300:8888
     depends_on:
       - kafka
     volumes:
@@ -153,4 +153,4 @@ services:
     depends_on:
       - contrails_api
     ports:
-      - 6300:80
+      - 6302:80
