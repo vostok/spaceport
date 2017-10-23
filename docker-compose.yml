@@ -96,7 +96,7 @@ services:
   gate:
     image: vstk/airlock.gate:latest
     ports:
-      - 6306:8888
+      - 6306:6306
     depends_on:
       - kafka
     volumes:
@@ -127,7 +127,7 @@ services:
       - kafka
       - gate
       - graphite
-    entrypoint: ["/bin/wait-for-it.sh", "gate:8888", "--timeout=30", "--strict", "--", "dotnet", "/app/Vostok.AirlockConsumer.MetricsAggregator/out/Vostok.AirlockConsumer.MetricsAggregator.dll"]
+    entrypoint: ["/bin/wait-for-it.sh", "gate:6306", "--timeout=30", "--strict", "--", "dotnet", "/app/Vostok.AirlockConsumer.MetricsAggregator/out/Vostok.AirlockConsumer.MetricsAggregator.dll"]
 
   # Tracing consumer
   tracing:
@@ -145,7 +145,7 @@ services:
       - kafka
       - graphite
       - gate
-    entrypoint: ["/bin/wait-for-it.sh", "gate:8888", "--timeout=30", "--strict", "--", "dotnet", "/app/Vostok.AirlockConsumer.TracesToEvents/out/Vostok.AirlockConsumer.TracesToEvents.dll"]
+    entrypoint: ["/bin/wait-for-it.sh", "gate:6306", "--timeout=30", "--strict", "--", "dotnet", "/app/Vostok.AirlockConsumer.TracesToEvents/out/Vostok.AirlockConsumer.TracesToEvents.dll"]
 
   contrails_api:
     image: vstk/contrails.api:latest
