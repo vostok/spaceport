@@ -153,7 +153,7 @@ services:
     depends_on:
       - cassandra
     ports:
-      - 6302:6301
+      - 6302:6302
 
   contrails_web:
     image: vstk/contrails.web:latest
