@@ -1,16 +1,14 @@
 # Spaceport
 
-All-in-one Vostok development infrastructure with integration tests inside.
-All component images you may find at [Docker Hub](https://hub.docker.com/u/vstk/).
+Spaceport is used to run Vostok infrastructure on a single host for development purposes. It contains all Vostok components which are configured to work with each other out-of-the-box.
 
-Spaceport is useful in two cases:
+Use Spaceport with [Launchpad](https://github.com/vostok/launchpad) to test newly created Vostok-instrumented applications.
 
-1. In combination with [launchpad](https://github.com/vostok/launchpad), to test newly created Vostok-instrumented applications.
-2. To fix bugs or develop new components in Vostok.
+Vostok contributors can also use Spaceport to fix bugs or develop new Vostok components.
 
-## Get Started
+## Installation
 
-[Docker](https://docs.docker.com/engine/installation/) (and `docker-compose`) are prerequisites. Check that you have them in your PATH:
+[Docker](https://docs.docker.com/engine/installation/) (and `docker-compose`) are prerequisites. Check that you have them in your `PATH`:
 
 ```
 $ docker --version
@@ -20,33 +18,49 @@ $ docker-compose --version
 docker-compose version 1.16.1, build 6d1ac21
 ```
 
-**Beware:** you won't be able to run all services on a very old or weak machine.
-Mid-2014 MacBook Pro with 8GB RAM shows acceptable performance in our experience.
+Clone this repository:
 
-If you have `make`:
+```
+$ git clone https://github.com/vostok/spaceport.git
+```
 
-- `make` or `make up` will download and run all necessary containers
-- `make down` will stop and remove them
+## Usage
+
+Use `make` to run Spaceport. It will download and run all necessary containers.
+
+**Beware.** You won't be able to run Spaceport on a very old or weak machine. Mid-2014 MacBook Pro with 8GB RAM shows acceptable performance.
+
+Go to [localhost:6300](http://localhost:6300) to check if all components are up and running.
+
+![](health-monitor.png)
+
+Other commands are also available:
+
+- `make down` will stop and remove all containers
 - `make test` will run integration test on running containers, while `make full-test` will stop and recreate them before running tests
-- `make pull` will pull latest versions of containers (and probably overwrite your local custom ones!)
+- `make pull` will pull latest versions of containers and overwrite your changes to containers
 
-If you don't have `make`, life will be a tiny bit harder for you. Just look inside the `Makefile` for commands.
+If you don't have `make`, look inside the `Makefile` for commands.
 
-## Web Applications
+### Web Applications
 
-Spaceport provides:
+Spaceport provides several end-user applications.
 
-- [Graphite](https://graphiteapp.org) at `localhost:6304` and [Grafana](https://grafana.com) at `localhost:6303`
-- [Kibana](https://www.elastic.co/products/kibana) at `localhost:6305`
-- [Contrails](https://github.com/vostok/contrails.web) at `localhost:6302`
+- [Graphite](https://graphiteapp.org) at [localhost:6304](http://localhost:6304) to explore and plot metrics
+- [Grafana](https://grafana.com) at [localhost:6303](http://localhost:6303) to create dashboards with metrics
+- [Kibana](https://www.elastic.co/products/kibana) at [localhost:6305](http://localhost:6305) to explore logs
+- [Contrails](https://github.com/vostok/contrails.web) at [localhost:6301](http://localhost:6301)
 
-## Test Vostok-instrumented Applications
+## Scenarios
 
-Use [launchpad](https://github.com/vostok/launchpad) to create a boilerplate C# project. It will be preconfigured to work with Spaceport on your local machine.
-Make some HTTP requests to your application and see results in Grafana, Kibana and Contrails.
+### Test Vostok-instrumented Applications
 
-## Fix Bugs and Develop New Components in Vostok
+Use [Launchpad](https://github.com/vostok/launchpad) to create an application. Make some HTTP requests to your application and explore results in Grafana, Kibana and Contrails.
+
+### Fix Bugs and Develop New Vostok Components
 
 Let's say you want to add some features to Contrails. This usually requires working on [Contrails API](https://github.com/vostok/contrails.api) and [Contrails Web](https://github.com/vostok/contrails.web) at the same time.
 
-First, you clone both Contrails repositories. `appsettings.json` in API is preconfigured to look for Kafka, Cassandra and other components by their container names. Change these names to `localhost`, since all Spaceport components are bound to the same ports on `localhost`. Now you have a working Spaceport with Contrails API replaced by your own application. Hack happily, and send us your pull requests.
+Clone both Contrails repositories. `appsettings.json` in API is preconfigured to look for Kafka, Cassandra and other components by their container names. Change these names to `localhost`, since all Spaceport components are bound to the same ports on `localhost`. Now you have a working Spaceport with Contrails API replaced with your own application.
+
+When you're done, send a pull request.
