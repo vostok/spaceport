@@ -118,7 +118,7 @@ services:
     depends_on:
       - kafka
       - graphite
-    entrypoint: ["/bin/wait-for-it.sh", "graphite:2003", "--timeout=30", "--strict", "--", "dotnet", "/app/Vostok.AirlockConsumer.Metrics/out/Vostok.AirlockConsumer.Metrics.dll"]
+    entrypoint: ["/bin/wait-for-it.sh", "graphite:80", "--timeout=30", "--strict", "--", "dotnet", "/app/Vostok.AirlockConsumer.Metrics/out/Vostok.AirlockConsumer.Metrics.dll"]
 
   # Metrics aggregation consumer
   metrics_aggr:
