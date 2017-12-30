@@ -138,15 +138,6 @@ services:
       - cassandra
     entrypoint: ["/bin/wait-for-it.sh", "cassandra:9042", "--timeout=30", "--strict", "--", "dotnet", "/app/Vostok.AirlockConsumer.Tracing/out/Vostok.AirlockConsumer.Tracing.dll"]
 
-  # TracesToEvents consumer
-  tte:
-    image: vstk/airlock.consumer:latest
-    depends_on:
-      - kafka
-      - graphite
-      - gate
-    entrypoint: ["/bin/wait-for-it.sh", "gate:6306", "--timeout=30", "--strict", "--", "dotnet", "/app/Vostok.AirlockConsumer.TracesToEvents/out/Vostok.AirlockConsumer.TracesToEvents.dll"]
-
   contrails_api:
     image: vstk/contrails.api:latest
     container_name: contrails_api
