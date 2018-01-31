@@ -101,7 +101,7 @@ services:
       - kafka
     volumes:
       - ./etc/airlock-gate:/etc/vostok/airlock-gate
-    entrypoint: ["/bin/wait-for-it.sh", "kafka:9092", "--timeout=30", "--strict", "--", "java", "-Xms256m", "-Xmx256m", "-XX:+UseG1GC", "-XX:MaxGCPauseMillis=200", "-jar","target/vostok-airlock-gate-1.0-SNAPSHOT.jar"]
+    entrypoint: ["/bin/wait-for-it.sh", "kafka:9092", "--timeout=60", "--strict", "--", "java", "-Xms256m", "-Xmx256m", "-XX:+UseG1GC", "-XX:MaxGCPauseMillis=200", "-jar","target/vostok-airlock-gate-1.0-SNAPSHOT.jar"]
 
   # Log consumer
   logs:
@@ -127,7 +127,7 @@ services:
       - kafka
       - gate
       - graphite
-    entrypoint: ["/bin/wait-for-it.sh", "gate:6306", "--timeout=30", "--strict", "--", "dotnet", "/app/Vostok.AirlockConsumer.MetricsAggregator/out/Vostok.AirlockConsumer.MetricsAggregator.dll"]
+    entrypoint: ["/bin/wait-for-it.sh", "graphite:80", "--timeout=30", "--strict", "--", "dotnet", "/app/Vostok.AirlockConsumer.MetricsAggregator/out/Vostok.AirlockConsumer.MetricsAggregator.dll"]
 
   # Tracing consumer
   tracing:
