@@ -110,6 +110,8 @@ services:
       - kafka
       - graphite
       - elasticsearch
+    environment:
+      AIRLOCK_KAFKA_AUTO_OFFSET_RESET: Earliest
     entrypoint: ["/bin/wait-for-it.sh", "elasticsearch:9200", "--timeout=30", "--strict", "--", "dotnet", "/app/Vostok.AirlockConsumer.Logs/out/Vostok.AirlockConsumer.Logs.dll"]
 
   # Metrics consumer
@@ -118,6 +120,8 @@ services:
     depends_on:
       - kafka
       - graphite
+    environment:
+      AIRLOCK_KAFKA_AUTO_OFFSET_RESET: Earliest
     entrypoint: ["/bin/wait-for-it.sh", "graphite:80", "--timeout=30", "--strict", "--", "dotnet", "/app/Vostok.AirlockConsumer.Metrics/out/Vostok.AirlockConsumer.Metrics.dll"]
 
   # Metrics aggregation consumer
@@ -127,6 +131,8 @@ services:
       - kafka
       - gate
       - graphite
+    environment:
+      AIRLOCK_KAFKA_AUTO_OFFSET_RESET: Earliest
     entrypoint: ["/bin/wait-for-it.sh", "graphite:80", "--timeout=30", "--strict", "--", "dotnet", "/app/Vostok.AirlockConsumer.MetricsAggregator/out/Vostok.AirlockConsumer.MetricsAggregator.dll"]
 
   # Tracing consumer
@@ -136,6 +142,8 @@ services:
       - kafka
       - graphite
       - cassandra
+    environment:
+      AIRLOCK_KAFKA_AUTO_OFFSET_RESET: Earliest
     entrypoint: ["/bin/wait-for-it.sh", "cassandra:9042", "--timeout=30", "--strict", "--", "dotnet", "/app/Vostok.AirlockConsumer.Tracing/out/Vostok.AirlockConsumer.Tracing.dll"]
 
   contrails_api:
