@@ -112,7 +112,7 @@ services:
       - elasticsearch
     environment:
       AIRLOCK_KAFKA_AUTO_OFFSET_RESET: Earliest
-    entrypoint: ["/bin/wait-for-it.sh", "elasticsearch:9200", "--timeout=30", "--strict", "--", "dotnet", "/app/Vostok.AirlockConsumer.Logs/out/Vostok.AirlockConsumer.Logs.dll"]
+    entrypoint: ["/bin/wait-for-it.sh", "elasticsearch:9200", "--timeout=30", "--strict", "--", "dotnet", "/app/Vstk.AirlockConsumer.Logs/out/Vstk.AirlockConsumer.Logs.dll"]
 
   # Metrics consumer
   metrics:
@@ -122,7 +122,7 @@ services:
       - graphite
     environment:
       AIRLOCK_KAFKA_AUTO_OFFSET_RESET: Earliest
-    entrypoint: ["/bin/wait-for-it.sh", "graphite:80", "--timeout=30", "--strict", "--", "dotnet", "/app/Vostok.AirlockConsumer.Metrics/out/Vostok.AirlockConsumer.Metrics.dll"]
+    entrypoint: ["/bin/wait-for-it.sh", "graphite:80", "--timeout=30", "--strict", "--", "dotnet", "/app/Vstk.AirlockConsumer.Metrics/out/Vstk.AirlockConsumer.Metrics.dll"]
 
   # Metrics aggregation consumer
   metrics_aggr:
@@ -133,7 +133,7 @@ services:
       - graphite
     environment:
       AIRLOCK_KAFKA_AUTO_OFFSET_RESET: Earliest
-    entrypoint: ["/bin/wait-for-it.sh", "graphite:80", "--timeout=30", "--strict", "--", "dotnet", "/app/Vostok.AirlockConsumer.MetricsAggregator/out/Vostok.AirlockConsumer.MetricsAggregator.dll"]
+    entrypoint: ["/bin/wait-for-it.sh", "graphite:80", "--timeout=30", "--strict", "--", "dotnet", "/app/Vstk.AirlockConsumer.MetricsAggregator/out/Vstk.AirlockConsumer.MetricsAggregator.dll"]
 
   # Tracing consumer
   tracing:
@@ -144,7 +144,7 @@ services:
       - cassandra
     environment:
       AIRLOCK_KAFKA_AUTO_OFFSET_RESET: Earliest
-    entrypoint: ["/bin/wait-for-it.sh", "cassandra:9042", "--timeout=30", "--strict", "--", "dotnet", "/app/Vostok.AirlockConsumer.Tracing/out/Vostok.AirlockConsumer.Tracing.dll"]
+    entrypoint: ["/bin/wait-for-it.sh", "cassandra:9042", "--timeout=30", "--strict", "--", "dotnet", "/app/Vstk.AirlockConsumer.Tracing/out/Vstk.AirlockConsumer.Tracing.dll"]
 
   contrails_api:
     image: vstk/contrails.api:latest
