@@ -4,7 +4,7 @@ services:
   #------------------------------------------ Tracing
   # Cassandra
   cassandra:
-    image: cassandra
+    image: cassandra:3.11.2
     container_name: cassandra
     ports:
       - 9042:9042
@@ -15,7 +15,7 @@ services:
   #------------------------------------------- Metrics
   # Graphite + Carbon - metric DB and receiver
   graphite:
-    image: nickstenning/graphite
+    image: nickstenning/graphite:latest
     container_name: graphite
     ports:
       - 6304:80
@@ -35,7 +35,7 @@ services:
   #------------------------------------------- Logs
   # Elasticsearch - log DB
   elasticsearch:
-    image: elasticsearch:latest
+    image: elasticsearch:5.6.8
     container_name: elasticsearch
     environment:
       ES_JAVA_OPTS: "-Xms512m -Xmx512m"
@@ -44,7 +44,7 @@ services:
 
   # Kibana - log vizualizer
   kibana:
-    image: kibana:latest
+    image: kibana:5.6.8
     container_name: kibana
     restart: "unless-stopped"
     depends_on:
@@ -57,7 +57,7 @@ services:
   #-------------------------------------------- Queue
   # Zookeeper - KV storage for Kafka
   zookeeper:
-    image: zookeeper:latest
+    image: zookeeper:3.3.6
     restart: always
     hostname: zk
     container_name: zk
@@ -68,7 +68,7 @@ services:
 
   # Kafka - stream processing engine
   kafka:
-    image: confluentinc/cp-kafka
+    image: confluentinc/cp-kafka:4.0.0-3
     container_name: kafka
     hostname: kafka
     depends_on:
@@ -86,7 +86,7 @@ services:
 
   #---------------------------------------------- Services
   portal:
-    image: nginx:alpine
+    image: nginx:1.13.9-alpine
     volumes:
       - ./etc/landing:/usr/share/nginx/html
     ports:
