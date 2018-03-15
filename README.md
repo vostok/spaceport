@@ -12,10 +12,10 @@ Vostok contributors can also use Spaceport to fix bugs or develop new Vostok com
 
 ```
 $ docker --version
-Docker version 17.09.0-ce, build afdb6d4
+Docker version 17.12.0-ce, build c97c6d6
 
 $ docker-compose --version
-docker-compose version 1.16.1, build 6d1ac21
+docker-compose version 1.18.0, build 8dd22a9
 ```
 
 Clone this repository:
