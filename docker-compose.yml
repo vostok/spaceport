@@ -151,6 +151,8 @@ services:
     container_name: contrails_api
     depends_on:
       - cassandra
+    environment:
+      VOSTOK_AIRLOCK__HOST: http://gate:6306
     ports:
       - 6302:6302
 
