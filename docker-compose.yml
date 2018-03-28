@@ -35,16 +35,19 @@ services:
   #------------------------------------------- Logs
   # Elasticsearch - log DB
   elasticsearch:
-    image: elasticsearch:5.6.8
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.2.3
     container_name: elasticsearch
     environment:
       ES_JAVA_OPTS: "-Xms512m -Xmx512m"
+      discovery.type: single-node
     ports:
       - 9200:9200
+    volumes:
+      - esdata:/usr/share/elasticsearch/data
 
   # Kibana - log vizualizer
   kibana:
-    image: kibana:5.6.8
+    image: docker.elastic.co/kibana/kibana:6.2.3
     container_name: kibana
     restart: "unless-stopped"
     depends_on:
@@ -112,7 +115,7 @@ services:
       - elasticsearch
     environment:
       AIRLOCK_KAFKA_AUTO_OFFSET_RESET: Earliest
-    entrypoint: ["/bin/wait-for-it.sh", "elasticsearch:9200", "--timeout=30", "--strict", "--", "dotnet", "/app/Vstk.AirlockConsumer.Logs/out/Vstk.AirlockConsumer.Logs.dll"]
+    entrypoint: ["/bin/wait-for-it.sh", "elasticsearch:9200", "--timeout=30", "--strict", "--", "dotnet", "/app/Vostok.Airlock.Consumer.Logs/out/Vostok.Airlock.Consumer.Logs.dll"]
 
   # Metrics consumer
   metrics:
@@ -122,7 +125,7 @@ services:
       - graphite
     environment:
       AIRLOCK_KAFKA_AUTO_OFFSET_RESET: Earliest
-    entrypoint: ["/bin/wait-for-it.sh", "graphite:80", "--timeout=30", "--strict", "--", "dotnet", "/app/Vstk.AirlockConsumer.Metrics/out/Vstk.AirlockConsumer.Metrics.dll"]
+    entrypoint: ["/bin/wait-for-it.sh", "graphite:80", "--timeout=30", "--strict", "--", "dotnet", "/app/Vostok.Airlock.Consumer.Metrics/out/Vostok.Airlock.Consumer.Metrics.dll"]
 
   # Metrics aggregation consumer
   metrics_aggr:
@@ -133,7 +136,7 @@ services:
       - graphite
     environment:
       AIRLOCK_KAFKA_AUTO_OFFSET_RESET: Earliest
-    entrypoint: ["/bin/wait-for-it.sh", "graphite:80", "--timeout=30", "--strict", "--", "dotnet", "/app/Vstk.AirlockConsumer.MetricsAggregator/out/Vstk.AirlockConsumer.MetricsAggregator.dll"]
+    entrypoint: ["/bin/wait-for-it.sh", "graphite:80", "--timeout=30", "--strict", "--", "dotnet", "/app/Vostok.Airlock.Consumer.MetricsAggregator/out/Vostok.Airlock.Consumer.MetricsAggregator.dll"]
 
   # Tracing consumer
   tracing:
@@ -144,7 +147,7 @@ services:
       - cassandra
     environment:
       AIRLOCK_KAFKA_AUTO_OFFSET_RESET: Earliest
-    entrypoint: ["/bin/wait-for-it.sh", "cassandra:9042", "--timeout=30", "--strict", "--", "dotnet", "/app/Vstk.AirlockConsumer.Tracing/out/Vstk.AirlockConsumer.Tracing.dll"]
+    entrypoint: ["/bin/wait-for-it.sh", "cassandra:9042", "--timeout=30", "--strict", "--", "dotnet", "/app/Vostok.Airlock.Consumer.Tracing/out/Vostok.Airlock.Consumer.Tracing.dll"]
 
   contrails_api:
     image: vstk/contrails.api:latest
@@ -162,3 +165,7 @@ services:
       - contrails_api
     ports:
       - 6301:80
+
+volumes:
+  esdata:
+    driver: local
