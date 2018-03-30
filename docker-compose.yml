@@ -11,6 +11,8 @@ services:
     environment:
       MAX_HEAP_SIZE: 512M
       HEAP_NEWSIZE: 512M
+    volumes:
+      - casdata:/var/lib/cassandra
 
   #------------------------------------------- Metrics
   # Graphite + Carbon - metric DB and receiver
@@ -20,6 +22,8 @@ services:
     ports:
       - 6304:80
       - 2003:2003
+    volumes:
+      - grpdata:/var/lib/graphite/storage/whisper
 
   # Grafana - metric visualization
   grafana:
@@ -31,6 +35,8 @@ services:
       GF_AUTH_ANONYMOUS_ENABLED: "true"
       GF_USERS_ALLOW_SIGN_UP: "false"
       GF_METRICS_GRAPHITE_ADDRESS: "graphite:2003"
+    volumes:
+      - grfdata:/var/lib/grafana
 
   #------------------------------------------- Logs
   # Elasticsearch - log DB
@@ -68,6 +74,9 @@ services:
       - 2181:2181
     environment:
       ZOO_MY_ID: 1
+    volumes:
+      - zkdata:/data
+      - zkdatalog:/datalog
 
   # Kafka - stream processing engine
   kafka:
@@ -86,6 +95,8 @@ services:
       KAFKA_ADVERTISED_HOST_NAME: kafka
       KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://kafka:9092"
       KAFKA_HEAP_OPTS: "-Xmx512m -Xms512m"
+    volumes:
+      - kafdata:/var/lib/kafka
 
   #---------------------------------------------- Services
   portal:
@@ -168,4 +179,16 @@ services:
 
 volumes:
   esdata:
+    driver: local
+  grpdata:
+    driver: local
+  grfdata:
+    driver: local
+  casdata:
+    driver: local
+  zkdata:
+    driver: local
+  zkdatalog:
+    driver: local
+  kafdata:
     driver: local
