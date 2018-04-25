@@ -37,7 +37,6 @@ Go to [localhost:6300](http://localhost:6300) to check if all components are up 
 Other commands are also available:
 
 - `make down` will stop and remove all containers
-- `make test` will run integration test on running containers, while `make full-test` will stop and recreate them before running tests
 - `make pull` will pull latest versions of containers and overwrite your changes to containers
 
 If you don't have `make`, look inside the `Makefile` for commands.
