@@ -56,8 +56,10 @@ Spaceport provides several end-user applications.
 
 ### Send test events
 For sending test events use `sender.jar`.
-Example of properties file: [application.properties](../etc/properties/sender/application.properties)
-Example of sending: `java -jar sender.jar application.properties=file://<path to application.properties file>`
+
+Example of properties file: [application.properties](../spaceport/etc/properties/sender/application.properties).
+
+Example of sending: `java -jar sender.jar application.properties=file://<path to application.properties file>`.
 
 ### Test Vostok-instrumented Applications
 
