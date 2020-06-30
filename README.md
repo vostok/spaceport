@@ -49,8 +49,15 @@ Spaceport provides several end-user applications.
 - [Grafana](https://grafana.com) at [localhost:6303](http://localhost:6303) to create dashboards with metrics
 - [Kibana](https://www.elastic.co/products/kibana) at [localhost:6305](http://localhost:6305) to explore logs
 - [Contrails](https://github.com/vostok/contrails.web) at [localhost:6301](http://localhost:6301)
+- [Management API](https://github.com/vostok/hercules/tree/master/hercules-management-api) at [localhost:6307](http://localhost:6307)
+- [Tracing API](https://github.com/vostok/hercules/tree/master/hercules-tracing-api) at [localhost:6308](http://localhost:6308)
 
 ## Scenarios
+
+### Send test events
+For sending test events use `sender.jar`.
+Example of properties file: [application.properties](../etc/properties/sender/application.properties)
+Example of sending: `java -jar sender.jar application.properties=file://<path to application.properties file>`
 
 ### Test Vostok-instrumented Applications
 
