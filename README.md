@@ -57,9 +57,7 @@ Spaceport provides several end-user applications.
 ### Send test events
 For sending test events use next commands:
 
- 1. docker pull vstk/hercules-gateway-client:0.38.0-SNAPSHOT
-
- 2. docker run --network=host -v <path to application.properties file>:/etc/hercules vstk/hercules-gateway-client:0.38.0-SNAPSHOT
+`docker run --network=host -v <path to application.properties file>:/etc/hercules vstk/hercules-gateway-client:0.38.0-SNAPSHOT`
 
 Example of properties file: [application.properties](etc/properties/gateway-client/application.properties).
 
