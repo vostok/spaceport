@@ -55,11 +55,13 @@ Spaceport provides several end-user applications.
 ## Scenarios
 
 ### Send test events
-For sending test events use `sender.jar`.
+For sending test events use next commands:
 
-Example of properties file: [application.properties](etc/properties/sender/application.properties).
+ 1. docker pull vstk/hercules-gateway-client:0.38.0-SNAPSHOT
 
-Example of sending: `java -jar sender.jar application.properties=file://<path to application.properties file>`.
+ 2. docker run --network=host -v <path to application.properties file>:/etc/hercules vstk/hercules-gateway-client:0.38.0-SNAPSHOT
+
+Example of properties file: [application.properties](etc/properties/gateway-client/application.properties).
 
 ### Test Vostok-instrumented Applications
 
