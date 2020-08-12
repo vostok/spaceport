@@ -1,21 +1,19 @@
-version: '2'
-
+version: '3.8'
 services:
-  #------------------------------------------ Tracing
-  # Cassandra
+  # Cassandra - tracing DB
   cassandra:
-    image: cassandra:3.11.2
+    image: cassandra:3.11.6
     container_name: cassandra
+    hostname: cassandra
     ports:
       - 9042:9042
     environment:
-      MAX_HEAP_SIZE: 512M
-      HEAP_NEWSIZE: 512M
+      MAX_HEAP_SIZE: 1024M
+      HEAP_NEWSIZE: 1024M
     volumes:
       - casdata:/var/lib/cassandra
 
-  #------------------------------------------- Metrics
-  # Graphite + Carbon - metric DB and receiver
+  # Graphite + Carbon - metric DB and receiver      
   graphite:
     image: nickstenning/graphite:latest
     container_name: graphite
@@ -27,7 +25,7 @@ services:
 
   # Grafana - metric visualization
   grafana:
-    image: grafana/grafana:4.5.2
+    image: grafana/grafana:6.2.5
     container_name: grafana
     ports:
       - 6303:3000
@@ -38,10 +36,9 @@ services:
     volumes:
       - grfdata:/var/lib/grafana
 
-  #------------------------------------------- Logs
   # Elasticsearch - log DB
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:6.2.3
+    image: elasticsearch:6.8.7
     container_name: elasticsearch
     environment:
       ES_JAVA_OPTS: "-Xms512m -Xmx512m"
@@ -53,9 +50,8 @@ services:
 
   # Kibana - log vizualizer
   kibana:
-    image: docker.elastic.co/kibana/kibana:6.2.3
+    image: kibana:6.8.7
     container_name: kibana
-    restart: "unless-stopped"
     depends_on:
       - elasticsearch
     ports:
@@ -63,11 +59,9 @@ services:
     environment:
       NODE_OPTIONS: "--max-old-space-size=300"
 
-  #-------------------------------------------- Queue
-  # Zookeeper - KV storage for Kafka
+  # Zookeeper - storage for Kafka
   zookeeper:
-    image: zookeeper:3.3.6
-    restart: always
+    image: zookeeper:3.4.9
     hostname: zk
     container_name: zk
     ports:
@@ -80,7 +74,7 @@ services:
 
   # Kafka - stream processing engine
   kafka:
-    image: confluentinc/cp-kafka:4.0.0-3
+    image: confluentinc/cp-kafka:5.4.1
     container_name: kafka
     hostname: kafka
     depends_on:
@@ -98,7 +92,8 @@ services:
     volumes:
       - kafdata:/var/lib/kafka
 
-  #---------------------------------------------- Services
+  # Services
+  # Landing with info
   portal:
     image: nginx:1.13.9-alpine
     volumes:
@@ -106,76 +101,122 @@ services:
     ports:
       - 6300:80
 
-  # Airlock Gate - HTTP -> Kafka proxy
+  # Configure main components (cassandra, zookeeper, kafka)
+  init:
+    image: vstk/hercules-init:${VERSION}
+    container_name: init
+    depends_on:
+      - cassandra
+    volumes:
+      - ./etc/init/results:/init/results
+      - ./etc/scripts:/scripts
+      - ./etc/properties/init:/etc/hercules
+    entrypoint: ["sh", "/scripts/write_init_success.sh"]
+  
+  # Kafka producer    
   gate:
-    image: vstk/airlock.gate:latest
+    image: vstk/hercules-gate:${VERSION}
+    container_name: gate
+    depends_on:
+      - init
     ports:
       - 6306:6306
-    depends_on:
-      - kafka
     volumes:
-      - ./etc/airlock-gate:/etc/vostok/airlock-gate
-    entrypoint: ["/bin/wait-for-it.sh", "kafka:9092", "--timeout=60", "--strict", "--", "java", "-Xms256m", "-Xmx256m", "-XX:+UseG1GC", "-XX:MaxGCPauseMillis=200", "-jar","target/vostok-airlock-gate-1.0-SNAPSHOT.jar"]
+      - ./etc/init/results:/init/results
+      - ./etc/scripts:/scripts
+      - ./etc/properties/gate:/etc/hercules
+    entrypoint: ["sh", "/scripts/wait_init_success.sh"]
 
-  # Log consumer
-  logs:
-    image: vstk/airlock.consumer:latest
+  # Manager for Kafka tasks    
+  stream-manager:
+    image: vstk/hercules-stream-manager:${VERSION}
+    container_name: stream-manager
     depends_on:
-      - kafka
-      - graphite
+      - init
+    ports:
+      - 6507:6507
+    volumes:
+      - ./etc/init/results:/init/results
+      - ./etc/scripts:/scripts
+      - ./etc/properties/stream-manager:/etc/hercules
+    entrypoint: ["sh", "/scripts/wait_init_success.sh"]
+
+  # API for creating Kafka tasks    
+  management-api:
+    image: vstk/hercules-management-api:${VERSION}
+    container_name: management-api
+    depends_on:
+      - stream-manager
+    ports:
+      - 6307:6307
+    volumes:
+      - ./etc/init/results:/init/results
+      - ./etc/scripts:/scripts
+      - ./etc/properties/management-api:/etc/hercules
+    entrypoint: ["sh", "/scripts/wait_init_success.sh"]
+  
+  # Init Kafka streams for logs, metrics and traces    
+  curl:
+    image: curlimages/curl:latest
+    volumes:
+      - ./etc/scripts:/scripts
+    depends_on:
+      - management-api
+    entrypoint: ["sh", "/scripts/manage.sh"]
+
+
+  # Kafka consumer for logs    
+  elastic-sink:
+    image: vstk/hercules-elastic-sink:${VERSION}
+    container_name: elastic-sink
+    depends_on:
       - elasticsearch
-    environment:
-      AIRLOCK_KAFKA_AUTO_OFFSET_RESET: Earliest
-    entrypoint: ["/bin/wait-for-it.sh", "elasticsearch:9200", "--timeout=30", "--strict", "--", "dotnet", "/app/Vostok.Airlock.Consumer.Logs/out/Vostok.Airlock.Consumer.Logs.dll"]
+      - management-api
+    volumes:
+      - ./etc/init/results:/init/results
+      - ./etc/scripts:/scripts
+      - ./etc/properties/elastic-sink:/etc/hercules
+    entrypoint: ["sh", "/scripts/wait_init_success.sh"]
 
-  # Metrics consumer
-  metrics:
-    image: vstk/airlock.consumer:latest
+  # Kafka consumer for metrics    
+  graphite-sink:
+    image: vstk/hercules-graphite-sink:${VERSION}
+    container_name: graphite-sink
     depends_on:
-      - kafka
       - graphite
-    environment:
-      AIRLOCK_KAFKA_AUTO_OFFSET_RESET: Earliest
-    entrypoint: ["/bin/wait-for-it.sh", "graphite:80", "--timeout=30", "--strict", "--", "dotnet", "/app/Vostok.Airlock.Consumer.Metrics/out/Vostok.Airlock.Consumer.Metrics.dll"]
+      - management-api
+    volumes:
+      - ./etc/init/results:/init/results
+      - ./etc/scripts:/scripts
+      - ./etc/properties/graphite-sink:/etc/hercules
+    entrypoint: ["sh", "/scripts/wait_init_success.sh"]
 
-  # Metrics aggregation consumer
-  metrics_aggr:
-    image: vstk/airlock.consumer:latest
+  # Kafka consumer for traces    
+  tracing-sink:
+    image: vstk/hercules-tracing-sink:${VERSION}
+    container_name: tracing-sink
     depends_on:
-      - kafka
-      - gate
-      - graphite
-    environment:
-      AIRLOCK_KAFKA_AUTO_OFFSET_RESET: Earliest
-    entrypoint: ["/bin/wait-for-it.sh", "graphite:80", "--timeout=30", "--strict", "--", "dotnet", "/app/Vostok.Airlock.Consumer.MetricsAggregator/out/Vostok.Airlock.Consumer.MetricsAggregator.dll"]
+      - init
+      - management-api
+    volumes:
+      - ./etc/init/results:/init/results
+      - ./etc/scripts:/scripts
+      - ./etc/properties/tracing-sink:/etc/hercules
+    entrypoint: ["sh", "/scripts/wait_init_success.sh"]
 
-  # Tracing consumer
-  tracing:
-    image: vstk/airlock.consumer:latest
-    depends_on:
-      - kafka
-      - graphite
-      - cassandra
-    environment:
-      AIRLOCK_KAFKA_AUTO_OFFSET_RESET: Earliest
-    entrypoint: ["/bin/wait-for-it.sh", "cassandra:9042", "--timeout=30", "--strict", "--", "dotnet", "/app/Vostok.Airlock.Consumer.Tracing/out/Vostok.Airlock.Consumer.Tracing.dll"]
-
-  contrails_api:
-    image: vstk/contrails.api:latest
-    container_name: contrails_api
-    depends_on:
-      - cassandra
-    environment:
-      VOSTOK_AIRLOCK__HOST: http://gate:6306
+  # API for getting traces from Cassandra    
+  tracing-api:
+    image: vstk/hercules-tracing-api:${VERSION}
+    container_name: tracing-api
     ports:
-      - 6302:6302
-
-  contrails_web:
-    image: vstk/contrails.web:latest
+      - 6308:6308
     depends_on:
-      - contrails_api
-    ports:
-      - 6301:80
+      - tracing-sink
+    volumes:
+      - ./etc/init/results:/init/results
+      - ./etc/scripts:/scripts
+      - ./etc/properties/tracing-api:/etc/hercules
+    entrypoint: ["sh", "/scripts/wait_init_success.sh"]
 
 volumes:
   esdata:
