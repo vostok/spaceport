@@ -1,10 +1,8 @@
 # Spaceport
 
-Spaceport is used to run Vostok infrastructure on a single host for development purposes. It contains all Vostok components which are configured to work with each other out-of-the-box.
+Spaceport is used to run Hercules infrastructure on a single host for development purposes. It contains all Hercules components which are configured to work with each other out-of-the-box.
 
-Use Spaceport with [Launchpad](https://github.com/vostok/launchpad) to test newly created Vostok-instrumented applications.
-
-Vostok contributors can also use Spaceport to fix bugs or develop new Vostok components.
+Hercules contributors can also use Spaceport to fix bugs or develop new Hercules components.
 
 ## Installation
 
@@ -12,10 +10,10 @@ Vostok contributors can also use Spaceport to fix bugs or develop new Vostok com
 
 ```
 $ docker --version
-Docker version 17.12.0-ce, build c97c6d6
+Docker version 19.03.0
 
 $ docker-compose --version
-docker-compose version 1.18.0, build 8dd22a9
+docker-compose version 1.25.5
 ```
 
 Clone this repository:
@@ -60,15 +58,3 @@ For sending test events use next commands:
 `docker run --network=host -v <path to application.properties file>:/etc/hercules vstk/hercules-gateway-client:0.38.0-SNAPSHOT`
 
 Example of properties file: [application.properties](etc/properties/gateway-client/application.properties).
-
-### Test Vostok-instrumented Applications
-
-Use [Launchpad](https://github.com/vostok/launchpad) to create an application. Make some HTTP requests to your application and explore results in Grafana, Kibana and Contrails.
-
-### Fix Bugs and Develop New Vostok Components
-
-Let's say you want to add some features to Contrails. This usually requires working on [Contrails API](https://github.com/vostok/contrails.api) and [Contrails Web](https://github.com/vostok/contrails.web) at the same time.
-
-Clone both Contrails repositories. `appsettings.json` in API is preconfigured to look for Kafka, Cassandra and other components by their container names. Change these names to `localhost`, since all Spaceport components are bound to the same ports on `localhost`. Now you have a working Spaceport with Contrails API replaced with your own application.
-
-When you're done, send a pull request.
