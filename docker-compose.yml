@@ -92,6 +92,17 @@ services:
     volumes:
       - kafdata:/var/lib/kafka
 
+  # Contrails - web view for traces
+  contrails:
+    image: vstk/contrails.web:latest
+    container_name: contrails-web
+    ports:
+      - 6301:80
+    depends_on:
+      - tracing-api
+    volumes:
+      - ./etc/properties/contrails/nginx.conf:/etc/nginx/conf.d/default.conf
+
   # Services
   # Landing with info
   portal:
