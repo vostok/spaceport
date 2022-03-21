@@ -161,3 +161,65 @@ If successful, you will see diagram. Click to `TestApplication` line to see trac
 
 ![](images/contrails.png)
 
+# How to use
+
+###If you want to add new stream
+By default, stream name should contains prefix 'logs', 'metrics' or 'traces'. 
+Submit request to **Management API** with stream name instead of `<stream name>`:
+
+```
+curl -v -X POST 'management-api:6307/streams/create' --header 'Content-Type: text/plain' -H 'masterApiKey: 123' --data '{
+    "type": "base",
+    "name": "<stream name>",
+    "partitions": 1,
+    "shardingKey": [],
+    "ttl": 86400000
+}'
+```
+
+###If you want to add new apiKey
+Submit request to **Management API** with new apiKey instead of `<apiKey>` and stream prefix instead of `<prefix>`:
+```
+curl -v -X POST 'management-api:6307/rules/set?key=<apiKey>&pattern=<prefix>*&rights=rwm' -H 'masterApiKey: 123'
+```
+
+###If you want to change stream prefix:
+To change prefix for logs, edit file
+etc\properties\elastic-sink>application.properties.
+
+To change prefix for metrics, edit file
+etc\properties\graphite-sink>application.properties.
+
+To change prefix for traces, edit file
+etc\properties\tracing-sink>application.properties.
+
+Change prefix in line
+```
+sink.pattern=metrics
+```
+
+###If you want to configure events
+Edit properties file:
+
+`etc/properties/gateway-client/log>application.properties` - for logs
+`etc/properties/gateway-client/metric>application.properties` - for metrics
+`etc/properties/gateway-client/trace>application.properties` - for traces
+
+You can configure:
+
+`gate-client.sender.stream` - stream in Kafka used for events writing
+
+`gate-client.sender.type` - event type. Default value: `log`. Values:
+- `log` - log-event for ElasticSearch and Sentry
+- `trace` - trace-event
+- `metric`- metric-event
+
+`gate-client.sender.apiKey` - API-key of specified stream
+
+`gate=client.sender.url` - URL of Hercules Gate server
+
+`gate-client.sender.eventCount` - event count per sending request. Default value: 1
+
+`gate-client.sender.requestCount` - sending request count. Default value: 1
+
+You can manage your events by changing file `test.sh` or write your own script.
