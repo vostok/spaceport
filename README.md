@@ -161,14 +161,14 @@ If successful, you will see diagram. Click to `TestApplication` line to see trac
 
 ![](images/contrails.png)
 
-# How to use
+# Additional notes
 
-###If you want to add new stream
+###To add new stream
 By default, stream name should contains prefix 'logs', 'metrics' or 'traces'. 
 Submit request to **Management API** with stream name instead of `<stream name>`:
 
 ```
-curl -v -X POST 'management-api:6307/streams/create' --header 'Content-Type: text/plain' -H 'masterApiKey: 123' --data '{
+curl -v -X POST 'management-api:6307/streams/create' --header 'Content-Type: text/plain' -H 'Authorization: Hercules masterApiKey 123' --data '{
     "type": "base",
     "name": "<stream name>",
     "partitions": 1,
@@ -176,34 +176,36 @@ curl -v -X POST 'management-api:6307/streams/create' --header 'Content-Type: tex
     "ttl": 86400000
 }'
 ```
+More informations in [Management API documentation](https://github.com/vostok/hercules/blob/master/hercules-management-api/README.md).
 
-###If you want to add new apiKey
+###To add new apiKey
 Submit request to **Management API** with new apiKey instead of `<apiKey>` and stream prefix instead of `<prefix>`:
 ```
-curl -v -X POST 'management-api:6307/rules/set?key=<apiKey>&pattern=<prefix>*&rights=rwm' -H 'masterApiKey: 123'
+curl -v -X POST 'management-api:6307/rules/set?key=<apiKey>&pattern=<prefix>*&rights=rwm' -H 'Authorization: Hercules masterApiKey 123'
 ```
+More informations in [Management API documentation](https://github.com/vostok/hercules/blob/master/hercules-management-api/README.md).
 
-###If you want to change stream prefix:
+###To use custom stream name:
+If your stream name don't start with default prefix (logs*, metrics* or traces*),
+change value in line `sink.pattern=<prefix name>`.
+
 To change prefix for logs, edit file
-etc\properties\elastic-sink>application.properties.
+`/etc/properties/elastic-sink/application.properties`.
 
 To change prefix for metrics, edit file
-etc\properties\graphite-sink>application.properties.
+`/etc/properties/graphite-sink/application.properties`.
 
 To change prefix for traces, edit file
-etc\properties\tracing-sink>application.properties.
+`/etc/properties/tracing-sink/application.properties`.
 
-Change prefix in line
-```
-sink.pattern=metrics
-```
-
-###If you want to configure events
+###To configure events
 Edit properties file:
 
-`etc/properties/gateway-client/log>application.properties` - for logs
-`etc/properties/gateway-client/metric>application.properties` - for metrics
-`etc/properties/gateway-client/trace>application.properties` - for traces
+`/etc/properties/gateway-client/log/application.properties` - for logs
+
+`/etc/properties/gateway-client/metric/application.properties` - for metrics
+
+`/etc/properties/gateway-client/trace/application.properties` - for traces
 
 You can configure:
 
