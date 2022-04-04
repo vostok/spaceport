@@ -100,7 +100,7 @@ services:
 
   # Configure main components (cassandra, zookeeper, kafka)
   init:
-    image: vstk/hercules-init:${VERSION}
+    image: vstk/hercules-init:0.44.1-SNAPSHOT
     container_name: init
     depends_on:
       - cassandra
@@ -112,7 +112,7 @@ services:
   
   # Kafka producer    
   gate:
-    image: vstk/hercules-gate:${VERSION}
+    image: vstk/hercules-gate:0.44.1-SNAPSHOT
     container_name: gate
     depends_on:
       - init
