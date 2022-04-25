@@ -2,14 +2,13 @@ version: '3.8'
 services:
   # Cassandra - tracing DB
   cassandra:
-    image: cassandra:3.11.6
+    image: cassandra:4.0.3
     container_name: cassandra
     hostname: cassandra
-    ports:
-      - 9042:9042
     environment:
       MAX_HEAP_SIZE: 1024M
       HEAP_NEWSIZE: 1024M
+      CASSANDRA_NUM_TOKENS: 256
     volumes:
       - casdata:/var/lib/cassandra
 
